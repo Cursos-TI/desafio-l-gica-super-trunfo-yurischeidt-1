@@ -28,8 +28,17 @@ int main() {
     float densidade1, rendaPerCapita1;
     float densidade2, rendaPerCapita2;
 
-    /* Variável que armazena a escolha do jogador no menu */
-    int opcao;
+    /* ================================================
+       VARIÁVEIS PARA A BATALHA COM DOIS ATRIBUTOS
+       ================================================ */
+    int opcao1, opcao2;         /* escolhas do jogador            */
+    double v1a, v2a;            /* valores do atributo 1 (c1, c2) */
+    double v1b, v2b;            /* valores do atributo 2 (c1, c2) */
+    double soma1, soma2;        /* soma dos dois atributos        */
+    int inv_a, inv_b;           /* 1 = menor vence (densidade)    */
+    int venc_a, venc_b;         /* 1=c1, 2=c2, 0=empate           */
+    const char *nome_attr1;     /* rótulo do atributo 1           */
+    const char *nome_attr2;     /* rótulo do atributo 2           */
 
     /* ================================================
        BOAS-VINDAS
@@ -123,34 +132,34 @@ int main() {
     printf("║         RESUMO DAS SUAS CARTAS           ║\n");
     printf("╚══════════════════════════════════════════╝\n");
 
-    printf("\n🃏  CARTA 1 — %s (%c)\n", cidade1, estado1);
+    printf("\n CARTA 1 — %s (%c)\n", cidade1, estado1);
     printf("------------------------------------------\n");
-    printf("  Código            : %s\n",           codigo1);
-    printf("  População         : %lu habitantes\n", populacao1);
-    printf("  Área              : %.2f km²\n",     area1);
+    printf("  Código            : %s\n",             codigo1);
+    printf("  População         : %lu habitantes\n",  populacao1);
+    printf("  Área              : %.2f km²\n",        area1);
     printf("  PIB               : R$ %.2f bilhões\n", PIB1);
-    printf("  Pontos Turísticos : %d pontos\n",    pontos1);
-    printf("  Densidade Popul.  : %.2f hab/km²\n", densidade1);
-    printf("  PIB per Capita    : R$ %.2f\n",      rendaPerCapita1);
+    printf("  Pontos Turísticos : %d pontos\n",       pontos1);
+    printf("  Densidade Popul.  : %.2f hab/km²\n",    densidade1);
+    printf("  PIB per Capita    : R$ %.2f\n",         rendaPerCapita1);
 
-    printf("\n🃏  CARTA 2 — %s (%c)\n", cidade2, estado2);
+    printf("\n CARTA 2 — %s (%c)\n", cidade2, estado2);
     printf("------------------------------------------\n");
-    printf("  Código            : %s\n",           codigo2);
-    printf("  População         : %lu habitantes\n", populacao2);
-    printf("  Área              : %.2f km²\n",     area2);
+    printf("  Código            : %s\n",             codigo2);
+    printf("  População         : %lu habitantes\n",  populacao2);
+    printf("  Área              : %.2f km²\n",        area2);
     printf("  PIB               : R$ %.2f bilhões\n", PIB2);
-    printf("  Pontos Turísticos : %d pontos\n",    pontos2);
-    printf("  Densidade Popul.  : %.2f hab/km²\n", densidade2);
-    printf("  PIB per Capita    : R$ %.2f\n",      rendaPerCapita2);
+    printf("  Pontos Turísticos : %d pontos\n",       pontos2);
+    printf("  Densidade Popul.  : %.2f hab/km²\n",    densidade2);
+    printf("  PIB per Capita    : R$ %.2f\n",         rendaPerCapita2);
 
     /* ================================================
-       MENU INTERATIVO
-       O jogador escolhe qual atributo comparar.
+       PRIMEIRO MENU — ESCOLHA DO ATRIBUTO 1
+       Todos os 6 atributos disponíveis.
        ================================================ */
     printf("\n");
     printf("╔══════════════════════════════════════════╗\n");
-    printf("║       HORA DE BATALHAR!                  ║\n");
-    printf("║  Escolha o atributo para a disputa:      ║\n");
+    printf("║        HORA DE BATALHAR!                 ║\n");
+    printf("║  Escolha o PRIMEIRO atributo:            ║\n");
     printf("╠══════════════════════════════════════════╣\n");
     printf("║  1  →  População                         ║\n");
     printf("║  2  →  Área                              ║\n");
@@ -160,115 +169,216 @@ int main() {
     printf("║  6  →  PIB per Capita                    ║\n");
     printf("╚══════════════════════════════════════════╝\n");
     printf("Sua escolha: ");
-    scanf("%d", &opcao);
+    scanf("%d", &opcao1);
 
+    /* Valida opcao1: repete até entrada correta */
+    while (opcao1 < 1 || opcao1 > 6) {
+        printf("❌ Opção inválida! Digite um número de 1 a 6: ");
+        scanf("%d", &opcao1);
+    }
+
+    /* ------------------------------------------------
+       Extrai valores e define regra do atributo 1
+       usando switch — cada case preenche:
+         v1a / v2a  → valor do atributo para carta 1 e 2
+         nome_attr1 → rótulo para exibição
+         inv_a      → 0 = maior vence | 1 = menor vence
+       ------------------------------------------------ */
+    switch (opcao1) {
+        case 1:
+            v1a = (double)populacao1;
+            v2a = (double)populacao2;
+            nome_attr1 = "População";
+            inv_a = 0;
+            break;
+        case 2:
+            v1a = (double)area1;
+            v2a = (double)area2;
+            nome_attr1 = "Área (km²)";
+            inv_a = 0;
+            break;
+        case 3:
+            v1a = (double)PIB1;
+            v2a = (double)PIB2;
+            nome_attr1 = "PIB (bilhões R$)";
+            inv_a = 0;
+            break;
+        case 4:
+            v1a = (double)pontos1;
+            v2a = (double)pontos2;
+            nome_attr1 = "Pontos Turísticos";
+            inv_a = 0;
+            break;
+        case 5:
+            v1a = (double)densidade1;
+            v2a = (double)densidade2;
+            nome_attr1 = "Densidade Popul. (hab/km²)";
+            inv_a = 1; /* MENOR vence! */
+            break;
+        case 6:
+            v1a = (double)rendaPerCapita1;
+            v2a = (double)rendaPerCapita2;
+            nome_attr1 = "PIB per Capita (R$)";
+            inv_a = 0;
+            break;
+        default:
+            /* Nunca alcançado após o while de validação,
+               mas necessário para compilar sem aviso.   */
+            v1a = 0; v2a = 0;
+            nome_attr1 = "?";
+            inv_a = 0;
+            break;
+    }
+
+    /* ================================================
+       SEGUNDO MENU — DINÂMICO
+       O atributo escolhido em opcao1 não é exibido.
+       ================================================ */
+    printf("\n");
+    printf("╔══════════════════════════════════════════╗\n");
+    printf("║  Escolha o SEGUNDO atributo:             ║\n");
+    printf("╠══════════════════════════════════════════╣\n");
+
+    /* Cada linha só é impressa se NÃO foi a primeira escolha */
+    if (opcao1 != 1) printf("║  1  →  População                         ║\n");
+    if (opcao1 != 2) printf("║  2  →  Área                              ║\n");
+    if (opcao1 != 3) printf("║  3  →  PIB                               ║\n");
+    if (opcao1 != 4) printf("║  4  →  Pontos Turísticos                 ║\n");
+    if (opcao1 != 5) printf("║  5  →  Densidade Populacional            ║\n");
+    if (opcao1 != 6) printf("║  6  →  PIB per Capita                    ║\n");
+
+    printf("╚══════════════════════════════════════════╝\n");
+    printf("Sua escolha: ");
+    scanf("%d", &opcao2);
+
+    /* Valida opcao2: deve ser 1–6 e diferente de opcao1 */
+    while (opcao2 < 1 || opcao2 > 6 || opcao2 == opcao1) {
+        if (opcao2 == opcao1)
+            printf("❌ Você já escolheu esse atributo! Escolha outro: ");
+        else
+            printf("❌ Opção inválida! Digite um número de 1 a 6: ");
+        scanf("%d", &opcao2);
+    }
+
+    /* ------------------------------------------------
+       Extrai valores e define regra do atributo 2
+       (mesma lógica do switch anterior)
+       ------------------------------------------------ */
+    switch (opcao2) {
+        case 1:
+            v1b = (double)populacao1;
+            v2b = (double)populacao2;
+            nome_attr2 = "População";
+            inv_b = 0;
+            break;
+        case 2:
+            v1b = (double)area1;
+            v2b = (double)area2;
+            nome_attr2 = "Área (km²)";
+            inv_b = 0;
+            break;
+        case 3:
+            v1b = (double)PIB1;
+            v2b = (double)PIB2;
+            nome_attr2 = "PIB (bilhões R$)";
+            inv_b = 0;
+            break;
+        case 4:
+            v1b = (double)pontos1;
+            v2b = (double)pontos2;
+            nome_attr2 = "Pontos Turísticos";
+            inv_b = 0;
+            break;
+        case 5:
+            v1b = (double)densidade1;
+            v2b = (double)densidade2;
+            nome_attr2 = "Densidade Popul. (hab/km²)";
+            inv_b = 1; /* MENOR vence! */
+            break;
+        case 6:
+            v1b = (double)rendaPerCapita1;
+            v2b = (double)rendaPerCapita2;
+            nome_attr2 = "PIB per Capita (R$)";
+            inv_b = 0;
+            break;
+        default:
+            v1b = 0; v2b = 0;
+            nome_attr2 = "?";
+            inv_b = 0;
+            break;
+    }
+
+    /* ================================================
+       CÁLCULO DA SOMA DOS DOIS ATRIBUTOS
+       A carta com maior soma vence a rodada.
+       ================================================ */
+    soma1 = v1a + v1b;
+    soma2 = v2a + v2b;
+
+    /* ================================================
+       DETERMINAÇÃO DOS VENCEDORES POR ATRIBUTO
+       Usando operador ternário aninhado:
+         inv=0 → maior valor vence
+         inv=1 → menor valor vence (densidade)
+       Resultado: 1 = carta1 vence | 2 = carta2 vence | 0 = empate
+       ================================================ */
+    venc_a = inv_a
+        ? (v1a < v2a ? 1 : (v2a < v1a ? 2 : 0))  /* menor vence */
+        : (v1a > v2a ? 1 : (v2a > v1a ? 2 : 0)); /* maior vence */
+
+    venc_b = inv_b
+        ? (v1b < v2b ? 1 : (v2b < v1b ? 2 : 0))  /* menor vence */
+        : (v1b > v2b ? 1 : (v2b > v1b ? 2 : 0)); /* maior vence */
+
+    /* ================================================
+       EXIBIÇÃO DO RESULTADO DA BATALHA
+       ================================================ */
     printf("\n");
     printf("╔══════════════════════════════════════════╗\n");
     printf("║           RESULTADO DA BATALHA           ║\n");
+    printf("╠══════════════════════════════════════════╣\n");
+    printf("║  %-20s  vs  %-15s║\n", cidade1, cidade2);
     printf("╚══════════════════════════════════════════╝\n\n");
 
-    /* ================================================
-       COMPARAÇÃO COM SWITCH
-       Cada case trata um atributo diferente.
-       O default trata entradas inválidas.
-       ================================================ */
-    switch (opcao) {
+    /* --- Resultado do Atributo 1 --- */
+    printf("⚔️  Atributo 1: %s\n", nome_attr1);
+    if (inv_a) printf("   ⚠️  Regra especial: MENOR valor vence!\n");
+    printf("   %-25s : %.2f\n", cidade1, v1a);
+    printf("   %-25s : %.2f\n", cidade2, v2a);
+    printf("   Resultado: %s\n\n",
+        venc_a == 1 ? cidade1 :
+        venc_a == 2 ? cidade2 :
+        "Empate neste atributo");
 
-        case 1:
-            /* --- POPULAÇÃO: maior vence --- */
-            printf("⚔️  Atributo escolhido: POPULAÇÃO\n\n");
-            printf("  %s: %lu habitantes\n", cidade1, populacao1);
-            printf("  %s: %lu habitantes\n\n", cidade2, populacao2);
+    /* --- Resultado do Atributo 2 --- */
+    printf("⚔️  Atributo 2: %s\n", nome_attr2);
+    if (inv_b) printf("   ⚠️  Regra especial: MENOR valor vence!\n");
+    printf("   %-25s : %.2f\n", cidade1, v1b);
+    printf("   %-25s : %.2f\n", cidade2, v2b);
+    printf("   Resultado: %s\n\n",
+        venc_b == 1 ? cidade1 :
+        venc_b == 2 ? cidade2 :
+        "Empate neste atributo");
 
-            if (populacao1 > populacao2) {
-                printf("🏆 %s venceu! Tem mais habitantes!\n", cidade1);
-            } else if (populacao2 > populacao1) {
-                printf("🏆 %s venceu! Tem mais habitantes!\n", cidade2);
-            } else {
-                printf("🤝 Empate! As duas cidades têm a mesma população.\n");
-            }
-            break;
+    /* --- Soma e Resultado Final --- */
+    printf("------------------------------------------\n");
+    printf("  SOMA DOS ATRIBUTOS:\n");
+    printf("   %-25s : %.2f\n", cidade1, soma1);
+    printf("   %-25s : %.2f\n", cidade2, soma2);
+    printf("------------------------------------------\n\n");
 
-        case 2:
-            /* --- ÁREA: maior vence --- */
-            printf("⚔️  Atributo escolhido: ÁREA\n\n");
-            printf("  %s: %.2f km²\n", cidade1, area1);
-            printf("  %s: %.2f km²\n\n", cidade2, area2);
+    printf("╔══════════════════════════════════════════╗\n");
+    printf("║           VENCEDOR DA RODADA             ║\n");
+    printf("╚══════════════════════════════════════════╝\n");
 
-            if (area1 > area2) {
-                printf("🏆 %s venceu! Tem maior área!\n", cidade1);
-            } else if (area2 > area1) {
-                printf("🏆 %s venceu! Tem maior área!\n", cidade2);
-            } else {
-                printf("🤝 Empate! As duas cidades têm a mesma área.\n");
-            }
-            break;
-
-        case 3:
-            /* --- PIB: maior vence --- */
-            printf("⚔️  Atributo escolhido: PIB\n\n");
-            printf("  %s: R$ %.2f bilhões\n", cidade1, PIB1);
-            printf("  %s: R$ %.2f bilhões\n\n", cidade2, PIB2);
-
-            if (PIB1 > PIB2) {
-                printf("🏆 %s venceu! Tem maior PIB!\n", cidade1);
-            } else if (PIB2 > PIB1) {
-                printf("🏆 %s venceu! Tem maior PIB!\n", cidade2);
-            } else {
-                printf("🤝 Empate! As duas cidades têm o mesmo PIB.\n");
-            }
-            break;
-
-        case 4:
-            /* --- PONTOS TURÍSTICOS: maior vence --- */
-            printf("⚔️  Atributo escolhido: PONTOS TURÍSTICOS\n\n");
-            printf("  %s: %d pontos\n", cidade1, pontos1);
-            printf("  %s: %d pontos\n\n", cidade2, pontos2);
-
-            if (pontos1 > pontos2) {
-                printf("🏆 %s venceu! Tem mais pontos turísticos!\n", cidade1);
-            } else if (pontos2 > pontos1) {
-                printf("🏆 %s venceu! Tem mais pontos turísticos!\n", cidade2);
-            } else {
-                printf("🤝 Empate! As duas cidades têm a mesma quantidade de pontos turísticos.\n");
-            }
-            break;
-
-        case 5:
-            /* --- DENSIDADE POPULACIONAL: menor vence (regra especial!) --- */
-            printf("⚔️  Atributo escolhido: DENSIDADE POPULACIONAL\n");
-            printf("   (Atenção: neste atributo, quem tem MENOS densidade vence!)\n\n");
-            printf("  %s: %.2f hab/km²\n", cidade1, densidade1);
-            printf("  %s: %.2f hab/km²\n\n", cidade2, densidade2);
-
-            if (densidade1 < densidade2) {
-                printf("🏆 %s venceu! Tem menor densidade populacional!\n", cidade1);
-            } else if (densidade2 < densidade1) {
-                printf("🏆 %s venceu! Tem menor densidade populacional!\n", cidade2);
-            } else {
-                printf("🤝 Empate! As duas cidades têm a mesma densidade populacional.\n");
-            }
-            break;
-
-        case 6:
-            /* --- PIB PER CAPITA: maior vence --- */
-            printf("⚔️  Atributo escolhido: PIB PER CAPITA\n\n");
-            printf("  %s: R$ %.2f\n", cidade1, rendaPerCapita1);
-            printf("  %s: R$ %.2f\n\n", cidade2, rendaPerCapita2);
-
-            if (rendaPerCapita1 > rendaPerCapita2) {
-                printf("🏆 %s venceu! Tem maior PIB per capita!\n", cidade1);
-            } else if (rendaPerCapita2 > rendaPerCapita1) {
-                printf("🏆 %s venceu! Tem maior PIB per capita!\n", cidade2);
-            } else {
-                printf("🤝 Empate! As duas cidades têm o mesmo PIB per capita.\n");
-            }
-            break;
-
-        default:
-            /* --- OPÇÃO INVÁLIDA --- */
-            printf("❌ Opção inválida! Por favor, escolha um número de 1 a 6.\n");
-            break;
+    if (soma1 > soma2) {
+        printf("🏆 %s VENCEU!\n", cidade1);
+        printf("   Soma: %.2f > %.2f\n", soma1, soma2);
+    } else if (soma2 > soma1) {
+        printf("🏆 %s VENCEU!\n", cidade2);
+        printf("   Soma: %.2f > %.2f\n", soma2, soma1);
+    } else {
+        printf("🤝 EMPATE! As duas cartas têm a mesma soma: %.2f\n", soma1);
     }
 
     printf("\n------------------------------------------\n");
